@@ -1,8 +1,8 @@
 # End to End Analytics Pipeline for Retail Data
 
-## Update
+## Updates
 
-[06-30-2025] - Bronze layer and data quality monitoring tables created and now in the workflow 
+[Link to updates](UPDATES.md)
 
 ## Target:
 
