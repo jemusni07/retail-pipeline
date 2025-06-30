@@ -17,9 +17,9 @@
 
 ## Data Ingestion:
 
--	Split the retail dataset to a daily flat file and made the date to current to future
-o	Start date: 06-26-2025 transaction
-o	End date: 04-24-2026
+-	Split the retail dataset to a daily flat file and made the date to from current to future
+  - Start date: 06-26-2025 transactions
+  -	End date: 04-24-2026 transactions
 -	GitHub Action to do scheduled upload of daily transaction file to S3 scheduled
   - Link: https://github.com/jemusni07/daily_uploads
 
