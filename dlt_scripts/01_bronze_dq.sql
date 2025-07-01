@@ -8,9 +8,9 @@ AS SELECT
   sum(case when Invoice is null then 1 else 0 end) as null_invoices,
   sum(case when StockCode is null then 1 else 0 end) as null_stock_codes,
   sum(case when CustomerID is null then 1 else 0 end) as null_customer_ids,
-  sum(case when Quantity <= 0 then 1 else 0 end) as bad_quantities,
-  sum(case when price <= 0 then 1 else 0 end) as bad_price,
+  sum(case when try_cast(Quantity as decimal(10,2)) <= 0 then 1 else 0 end) as bad_quantities,
+  sum(case when try_cast(price as decimal(10,2)) < 0 then 1 else 0 end) as bad_price,
   round(sum(case when _rescued_data is null then 1 else 0 end) * 100.0 / count(*), 2) as rescued_data_quality_score,
   current_timestamp() as created_timestamp
 FROM retail_analytics.dlt.retail_transactions_bronze
-GROUP BY processing_date
+GROUP BY processing_date;
