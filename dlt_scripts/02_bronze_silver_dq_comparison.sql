@@ -9,7 +9,8 @@ AS SELECT
     sum(case when Quantity is NULL then 1 else 0 end) as null_quantity,
     sum(case when cast(Quantity as integer) <= 0 then 1 else 0 end) as bad_quantity,
     sum(case when InvoiceDate is NULL then 1 else 0 end) as null_invoice_date,
-    sum(case when cast(Price as decimal(10,2)) < 0 then 1 else 0 end) as bad_price
+    sum(case when cast(Price as decimal(10,2)) < 0 then 1 else 0 end) as bad_price,
+    sum(case when CustomerId is NULL then 1 else 0 end) as null_customer_id
 FROM retail_transactions_bronze
 GROUP BY processing_date
 UNION
@@ -23,7 +24,8 @@ SELECT
     sum(case when Quantity is NULL then 1 else 0 end) as null_quantity,
     sum(case when Quantity <= 0 then 1 else 0 end) as bad_quantity,
     sum(case when InvoiceDate is NULL then 1 else 0 end) as null_invoice_date,
-    sum(case when UnitPrice < 0 then 1 else 0 end) as bad_price
+    sum(case when UnitPrice < 0 then 1 else 0 end) as bad_price,
+    sum(case when CustomerId is NULL then 1 else 0 end) as null_customer_id
 FROM retail_transactions_silver
 GROUP BY processing_date
 ORDER BY processing_date DESC, table_layer

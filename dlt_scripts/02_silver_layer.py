@@ -18,6 +18,7 @@ from datetime import datetime
 @dlt.expect_or_drop("valid_unit_price", "UnitPrice >= 0")
 @dlt.expect_or_drop("valid_invoice_date", "InvoiceDate IS NOT NULL")
 
+
 def retail_transactions_silver():
     """
     Silver layer: Cleaned retail transactions with proper data types and validation.
