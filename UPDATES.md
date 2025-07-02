@@ -5,3 +5,6 @@
 
 **[07-01-2025]** - Added the clean silver layer to the workflow, added two data quality monitoring tables - dlt_dailly_counts and bronze_silver_dq_comparison
     ![Data Lineage](images/07_01_2025.png)
+
+**[07-02-2025]** - Added customer RFM gold table to the dlt pipeline/workflow
+    ![Data Lineage](images/07_02_2025.png)
