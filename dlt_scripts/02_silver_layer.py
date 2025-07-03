@@ -13,7 +13,7 @@ from datetime import datetime
     }
 )
 @dlt.expect_or_drop("valid_invoice_no", "InvoiceNo IS NOT NULL AND (length(InvoiceNo) = 6 OR length(InvoiceNo) = 7)")
-@dlt.expect_or_drop("valid_stock_code", "StockCode IS NOT NULL AND length(StockCode) >= 5")
+@dlt.expect_or_drop("valid_stock_code", "StockCode IS NOT NULL")
 @dlt.expect_or_drop("valid_quantity", "Quantity IS NOT NULL AND Quantity > 0")
 @dlt.expect_or_drop("valid_unit_price", "UnitPrice >= 0")
 @dlt.expect_or_drop("valid_invoice_date", "InvoiceDate IS NOT NULL")

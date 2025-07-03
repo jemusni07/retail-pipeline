@@ -9,4 +9,10 @@ SELECT
     sum(TotalPrice) as Monetary
 FROM retail_transactions_silver
 WHERE CustomerID IS NOT NULL
+AND IsCancellation = false
+AND (
+    StockCode REGEXP '^\\d{5}$' 
+    OR StockCode REGEXP '^\\d{5}[a-zA-Z]+$' 
+    OR StockCode = 'PADS'
+)
 GROUP BY CustomerID
