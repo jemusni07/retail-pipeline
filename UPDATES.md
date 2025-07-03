@@ -8,3 +8,6 @@
 
 **[07-02-2025]** - Added customer RFM gold table to the dlt pipeline/workflow
     ![Data Lineage](images/07_02_2025.png)
+
+**[07-03-2025]** - Added notebook for Customer RFM Segmentation EDA and K Means Clustering
+   -  [Notebook](eda_kmeans_clustering/RFM data clustering.ipynb)
