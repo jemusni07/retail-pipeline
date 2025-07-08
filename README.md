@@ -5,7 +5,7 @@
 [Link to updates](UPDATES.md)
 
 ## Disclaimer:
- This project is inspired by TrentDoesMath's YouTube video: https://www.youtube.com/watch?v=afPJeQuVeuY&t=2587s
+ This project is inspired by TrentDoesMath's YouTube video: https://www.youtube.com/watch?v=afPJeQuVeuY&t=2587s. He did well cleaning, feature engineering and ML modeling for the retail dataset. Highly recommended to follow it.
 
 The main difference between this project and the YouTube video is that it operationalizes customer segmentation using K-means clustering. Trent's dataset was already historical, but this project treats the dataset as current and continuously updated. We divided the historical dataset by day and shifted its dates from the past to current and future dates. This approach allows us to practice building a real production ETL pipeline for retail data.
 
