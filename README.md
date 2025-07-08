@@ -4,6 +4,12 @@
 
 [Link to updates](UPDATES.md)
 
+## Disclaimer:
+ This project is inspired by TrentDoesMath's YouTube video: https://www.youtube.com/watch?v=afPJeQuVeuY&t=2587s
+
+The main difference between this project and the YouTube video is that it operationalizes customer segmentation using K-means clustering. Trent's dataset was already historical, but this project treats the dataset as current and continuously updated. We divided the historical dataset by day and shifted its dates from the past to current and future dates. This approach allows us to practice building a real production ETL pipeline for retail data.
+
+
 ## Target:
 
 -	Build Cluster Analysis for RFM using K-Means Clustering to determine different customer segments
