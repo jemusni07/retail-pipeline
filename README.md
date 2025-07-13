@@ -167,6 +167,70 @@ Each segment receives tailored strategies:
 - **Growth Segments**: Upselling campaigns, subscription models, frequency building
 - **New/Low-Value**: Educational content, onboarding programs, trial offers
 
+### Cluster-to-Segment Mapping Logic
+
+#### **Centroid-Based Classification**
+The system maps K-means cluster numbers to business segments using **cluster centroids** (median RFM values per cluster) rather than individual customer values:
+
+```python
+# Foundation variables for each cluster
+overall_monetary = median(all_customer_monetary_values)
+overall_frequency = median(all_customer_frequency_values) 
+overall_recency = median(all_customer_recency_values)
+
+# For each cluster, create categorical classifications
+monetary_level = 'High' if cluster_median_monetary > overall_monetary else 'Low'
+frequency_level = 'High' if cluster_median_frequency > overall_frequency else 'Low'
+recency_level = 'Recent' if cluster_median_recency < overall_recency else 'Dormant'
+```
+
+#### **Hierarchical Decision Tree**
+Segment assignment follows a **tiered conditional logic** with specific multiplier thresholds:
+
+**Tier 1: Super VIP (>2x monetary + >2x frequency)**
+```sql
+WHEN Med_Monetary > overall_monetary * 2 AND Med_Frequency > overall_frequency * 2
+  AND recency_level = 'Recent' THEN 'Super VIP Champions'
+  AND recency_level = 'Dormant' THEN 'VIP At Risk'
+```
+
+**Tier 2: Ultra High Value (>4x monetary)**
+```sql
+WHEN Med_Monetary > overall_monetary * 4 
+  AND Med_Frequency > overall_frequency AND recency_level = 'Recent' 
+  THEN 'Ultra High Value Active'
+```
+
+**Tier 3: High Value (2x-4x monetary)**
+```sql
+WHEN Med_Monetary > overall_monetary * 2 AND Med_Monetary <= overall_monetary * 4
+  AND Med_Frequency > overall_frequency AND recency_level = 'Recent'
+  THEN 'High Value Active'
+```
+
+**Tier 4: Champions (1x-2x monetary + 1x-2x frequency)**
+```sql
+WHEN Med_Monetary > overall_monetary AND Med_Monetary <= overall_monetary * 2
+  AND Med_Frequency > overall_frequency AND recency_level = 'Recent'
+  THEN 'Champions'
+```
+
+#### **Key Mapping Features**
+- **Statistical Thresholds**: Uses 2x, 4x multipliers for monetary; 2x for frequency
+- **Order Dependency**: Most specific conditions evaluated first (VIP → High Value → Regular)
+- **Cluster-Specific Rules**: Special handling for outlier clusters (-1, -2, -3)
+- **Hybrid Logic**: Combines statistical analysis with business intuition
+- **Comprehensive Coverage**: 15+ distinct segment types covering all RFM combinations
+
+#### **Example Cluster Transformation**
+```python
+# Cluster 0: Med_Monetary=1500, Med_Frequency=8, Med_Recency=45
+# Overall: Monetary=800, Frequency=4, Recency=60
+
+if 1500 > 800*2 and 8 > 4*2 and 45 < 60:
+    segment = "Super VIP Champions"  # High monetary, high frequency, recent
+```
+
 ### Production Implementation
 - **Materialized Delta Tables**: `customer_rfm_kmeans_clustered`, `cluster_summary`, `cluster_description_and_recommendation`
 - **Daily Updates**: Automated refresh with `UpdateDate` tracking
