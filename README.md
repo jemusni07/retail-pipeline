@@ -130,6 +130,38 @@ graph TD
 - **Data Preprocessing**: StandardScaler normalization of RFM metrics for fair clustering
 - **3D Analysis**: Clusters based on scaled Recency, Frequency, and Monetary dimensions
 
+#### Outlier Detection Methodology
+The clustering algorithm uses **IQR-based outlier detection** to identify and handle extreme customers before applying K-means:
+
+**Statistical Outlier Identification:**
+```python
+# Monetary Value Outliers
+M_Q1 = df["Monetary"].quantile(0.25)
+M_Q3 = df["Monetary"].quantile(0.75)
+M_IQR = M_Q3 - M_Q1
+monetary_outliers = df[(df["Monetary"] > (M_Q3 + 1.5 * M_IQR)) | 
+                      (df["Monetary"] < (M_Q1 - 1.5 * M_IQR))]
+
+# Frequency Outliers  
+F_Q1 = df['Frequency'].quantile(0.25)
+F_Q3 = df['Frequency'].quantile(0.75) 
+F_IQR = F_Q3 - F_Q1
+frequency_outliers = df[(df['Frequency'] > (F_Q3 + 1.5 * F_IQR)) | 
+                       (df['Frequency'] < (F_Q1 - 1.5 * F_IQR))]
+```
+
+**Outlier Cluster Assignment:**
+- **Cluster -1**: Monetary-only outliers (extremely high/low spending customers)
+- **Cluster -2**: Frequency-only outliers (extremely frequent/rare purchasing customers)  
+- **Cluster -3**: Combined outliers (extreme in both monetary and frequency dimensions)
+
+**Business Rationale:**
+K-means clustering is sensitive to outliers because it uses squared Euclidean distance, causing extreme values to disproportionately influence cluster centroids. By pre-identifying and separately categorizing outliers:
+- Main customer segments reflect typical behavioral patterns
+- Extreme customers receive specialized business treatment
+- Clustering accuracy improves for the majority population
+- Outlier customers are preserved for targeted VIP/risk management strategies
+
 ### Business-Friendly Segment Classifications
 
 #### 🏆 **Premium Tiers**
