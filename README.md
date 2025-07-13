@@ -286,11 +286,25 @@ Frequency: INTEGER       -- Number of transactions
 Monetary: DECIMAL        -- Total spend amount
 ```
 
-## Data Quality Monitoring
+## Data Quality & Monitoring
 
+### Quality Expectations (Silver Layer)
+- **valid_invoice_no**: Invoice length 6-7 characters, not null
+- **valid_stock_code**: Stock code must be present
+- **valid_quantity**: Quantity > 0 and not null
+- **valid_unit_price**: Unit price >= 0
+- **valid_invoice_date**: Valid date format required
+
+### Quality Monitoring Scripts
 - **Bronze DQ**: `dlt_scripts/01_bronze_dq.sql` - Data quality tracking at ingestion
 - **Daily Counts**: `dlt_scripts/04_dlt_daily_counts.sql` - Daily processing metrics
 - **Bronze-Silver Comparison**: `dlt_scripts/02_bronze_silver_dq_comparison.sql` - Data validation between layers
+
+### Data Filters & Validation
+- Excludes cancellation transactions (Invoice starting with 'C')
+- Stock code pattern validation (5-digit codes or 'PADS')
+- Customer ID must be present for RFM analysis
+- Removes invalid or negative quantities/prices
 
 ## Technology Stack
 
@@ -383,27 +397,6 @@ This interactive dashboard demonstrates the end-to-end pipeline results, showcas
 - RFM metrics visualization (Recency, Frequency, Monetary)
 - Customer cluster distributions and insights
 - Real-time analytics powered by the data engineering pipeline
-
-## Data Quality
-
-### Quality Expectations (Silver Layer)
-- **valid_invoice_no**: Invoice length 6-7 characters, not null
-- **valid_stock_code**: Stock code must be present
-- **valid_quantity**: Quantity > 0 and not null
-- **valid_unit_price**: Unit price >= 0
-- **valid_invoice_date**: Valid date format required
-
-### Quality Monitoring Tables
-- **bronze_dq**: Tracks data quality metrics at ingestion
-- **dlt_daily_counts**: Daily processing volume monitoring
-- **bronze_silver_dq_comparison**: Validates data integrity between layers
-
-### Data Filters
-- Excludes cancellation transactions (Invoice starting with 'C')
-- Stock code pattern validation (5-digit codes or 'PADS')
-- Customer ID must be present for RFM analysis
-- Removes invalid or negative quantities/prices
-
 
 ## Disclaimer
 
