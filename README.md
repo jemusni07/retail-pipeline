@@ -15,15 +15,19 @@ This data engineering project showcases a full-stack implementation covering:
 - **Application Layer**: Machine learning clustering with materialized results
 - **Monitoring Layer**: Comprehensive data quality and pipeline observability
 
-## 🚀 Live Application
+## Data Source
 
-**RFM Customer Analytics Dashboard**: [https://rfm-dashboard-q7ne.onrender.com/](https://rfm-dashboard-q7ne.onrender.com/)
+- **Dataset**: [Online Retail II - UCI ML Repository](https://archive.ics.uci.edu/dataset/502/online+retail+ii)
+- **Description**: UK-based online retail transactions (2009-2011) for unique gift-ware
+- **Customer Base**: Primarily wholesalers
+- **Transformation**: Historical data split into daily files with shifted dates (2025-2026)
 
-This interactive dashboard demonstrates the end-to-end pipeline results, showcasing:
-- Customer segmentation analysis from the ML pipeline
-- RFM metrics visualization (Recency, Frequency, Monetary)
-- Customer cluster distributions and insights
-- Real-time analytics powered by the data engineering pipeline
+## Data Ingestion Strategy
+
+- **Approach**: Daily batch processing simulating real-time operations
+- **Date Range**: June 26, 2025 → April 24, 2026
+- **Automation**: [GitHub Actions for scheduled S3 uploads](https://github.com/jemusni07/daily_uploads)
+- **Storage**: AWS S3 bucket (`s3://raw-retail-jmusni/daily_sales/`)
 
 ## Data Architecture
 
@@ -237,110 +241,6 @@ if 1500 > 800*2 and 8 > 4*2 and 45 < 60:
 - **3D Visualization**: Interactive cluster analysis and validation
 - **Statistical Validation**: Silhouette scores and elbow method for model quality
 
-## Data Quality Monitoring
-
-- **Bronze DQ**: `dlt_scripts/01_bronze_dq.sql` - Data quality tracking at ingestion
-- **Daily Counts**: `dlt_scripts/04_dlt_daily_counts.sql` - Daily processing metrics
-- **Bronze-Silver Comparison**: `dlt_scripts/02_bronze_silver_dq_comparison.sql` - Data validation between layers
-
-## Repository Structure
-
-```
-├── README.md                           # Project documentation
-├── UPDATES.md                          # Project timeline and updates
-├── dlt_scripts/                        # Delta Live Tables pipeline scripts
-│   ├── 01_bronze_layer.py             # Raw data ingestion
-│   ├── 01_bronze_dq.sql               # Bronze layer data quality
-│   ├── 02_silver_layer.py             # Data cleaning and validation
-│   ├── 02_bronze_silver_dq_comparison.sql # Layer comparison
-│   ├── 03_gold_layer.py               # Business analytics (commented)
-│   ├── 04_dlt_daily_counts.sql        # Daily processing metrics
-│   └── 05_customer_rfm_gold.sql       # RFM analysis table
-├── customer_segmentation_kmeans_clustering/
-│   └── RFM data clustering.ipynb       # Customer segmentation notebook
-└── images/                             # Pipeline evolution screenshots
-    ├── 06_30_2025.png                 # Bronze layer implementation
-    ├── 07_01_2025.png                 # Silver layer addition
-    └── 07_02_2025.png                 # Gold layer RFM implementation
-```
-
-## Data Source
-
-- **Dataset**: [Online Retail II - UCI ML Repository](https://archive.ics.uci.edu/dataset/502/online+retail+ii)
-- **Description**: UK-based online retail transactions (2009-2011) for unique gift-ware
-- **Customer Base**: Primarily wholesalers
-- **Transformation**: Historical data split into daily files with shifted dates (2025-2026)
-
-## Data Ingestion Strategy
-
-- **Approach**: Daily batch processing simulating real-time operations
-- **Date Range**: June 26, 2025 → April 24, 2026
-- **Automation**: [GitHub Actions for scheduled S3 uploads](https://github.com/jemusni07/daily_uploads)
-- **Storage**: AWS S3 bucket (`s3://raw-retail-jmusni/daily_sales/`)
-
-## Technology Stack
-
-- **Data Platform**: Databricks
-- **Orchestration**: Databricks Workflows
-- **Storage**: AWS S3 (raw files), Delta Lake (processed data)
-- **Pipeline Framework**: Delta Live Tables (DLT)
-- **Analytics**: Databricks Notebooks & Dashboards
-- **Machine Learning**: scikit-learn (K-means clustering)
-- **Automation**: GitHub Actions
-
-## Key Features
-
-- **Real-time Processing**: Streaming data ingestion with cloudFiles
-- **Data Quality**: Comprehensive validation and expectation handling
-- **Customer Analytics**: RFM analysis and behavioral segmentation
-- **Monitoring**: Multi-layer data quality tracking
-- **Scalability**: Delta Lake optimization and auto-compaction
-- **Production Ready**: Materialized views and optimized storage
-
-## Data Lineage
-
-
-```mermaid
-graph LR
-    subgraph "Automation"
-        GHA[GitHub Actions<br/>Daily Upload<br/>CRON Schedule]
-    end
-    
-    subgraph "Storage"
-        S3[AWS S3 Bucket<br/>/daily_sales/<br/>CSV Files]
-    end
-    
-    subgraph "Tables & Views"
-        BRONZE[🥉 Bronze Layer<br/>retail_transactions_bronze<br/>Raw data + metadata]
-        SILVER[🥈 Silver Layer<br/>retail_transactions_silver<br/>Cleaned & validated data]
-        GOLD[🥇 Gold Layer<br/>customer_rfm_gold<br/>RFM aggregated metrics<br/>Materialized View]
-        APP[🤖 Application Output<br/>customer_segments_clustered<br/>K-means customer segments<br/>Materialized Table]
-    end
-    
-    subgraph "Data Quality Monitoring"
-        DQ1[bronze_dq<br/>Ingestion Metrics]
-        DQ2[dlt_daily_counts<br/>Volume Monitoring]
-        DQ3[bronze_silver_dq_comparison<br/>Layer Validation]
-    end
-    
-    GHA --> S3
-    S3 --> BRONZE
-    BRONZE --> SILVER
-    SILVER --> GOLD
-    GOLD --> APP
-    
-    BRONZE --> DQ1
-    SILVER --> DQ2
-    BRONZE --> DQ3
-    SILVER --> DQ3
-    
-    style BRONZE fill:#ffd54f
-    style SILVER fill:#e0e0e0
-    style GOLD fill:#ffd700
-    style APP fill:#f3e5f5
-```
-</details>
-
 ## Data Contract
 
 ### Bronze Layer Schema
@@ -385,6 +285,104 @@ Recency: INTEGER         -- Days since last purchase
 Frequency: INTEGER       -- Number of transactions
 Monetary: DECIMAL        -- Total spend amount
 ```
+
+## Data Quality Monitoring
+
+- **Bronze DQ**: `dlt_scripts/01_bronze_dq.sql` - Data quality tracking at ingestion
+- **Daily Counts**: `dlt_scripts/04_dlt_daily_counts.sql` - Daily processing metrics
+- **Bronze-Silver Comparison**: `dlt_scripts/02_bronze_silver_dq_comparison.sql` - Data validation between layers
+
+## Technology Stack
+
+- **Data Platform**: Databricks
+- **Orchestration**: Databricks Workflows
+- **Storage**: AWS S3 (raw files), Delta Lake (processed data)
+- **Pipeline Framework**: Delta Live Tables (DLT)
+- **Analytics**: Databricks Notebooks & Dashboards
+- **Machine Learning**: scikit-learn (K-means clustering)
+- **Automation**: GitHub Actions
+
+## Data Lineage
+
+```mermaid
+graph LR
+    subgraph "Automation"
+        GHA[GitHub Actions<br/>Daily Upload<br/>CRON Schedule]
+    end
+    
+    subgraph "Storage"
+        S3[AWS S3 Bucket<br/>/daily_sales/<br/>CSV Files]
+    end
+    
+    subgraph "Tables & Views"
+        BRONZE[🥉 Bronze Layer<br/>retail_transactions_bronze<br/>Raw data + metadata]
+        SILVER[🥈 Silver Layer<br/>retail_transactions_silver<br/>Cleaned & validated data]
+        GOLD[🥇 Gold Layer<br/>customer_rfm_gold<br/>RFM aggregated metrics<br/>Materialized View]
+        APP[🤖 Application Output<br/>customer_segments_clustered<br/>K-means customer segments<br/>Materialized Table]
+    end
+    
+    subgraph "Data Quality Monitoring"
+        DQ1[bronze_dq<br/>Ingestion Metrics]
+        DQ2[dlt_daily_counts<br/>Volume Monitoring]
+        DQ3[bronze_silver_dq_comparison<br/>Layer Validation]
+    end
+    
+    GHA --> S3
+    S3 --> BRONZE
+    BRONZE --> SILVER
+    SILVER --> GOLD
+    GOLD --> APP
+    
+    BRONZE --> DQ1
+    SILVER --> DQ2
+    BRONZE --> DQ3
+    SILVER --> DQ3
+    
+    style BRONZE fill:#ffd54f
+    style SILVER fill:#e0e0e0
+    style GOLD fill:#ffd700
+    style APP fill:#f3e5f5
+```
+
+## Repository Structure
+
+```
+├── README.md                           # Project documentation
+├── UPDATES.md                          # Project timeline and updates
+├── dlt_scripts/                        # Delta Live Tables pipeline scripts
+│   ├── 01_bronze_layer.py             # Raw data ingestion
+│   ├── 01_bronze_dq.sql               # Bronze layer data quality
+│   ├── 02_silver_layer.py             # Data cleaning and validation
+│   ├── 02_bronze_silver_dq_comparison.sql # Layer comparison
+│   ├── 03_gold_layer.py               # Business analytics (commented)
+│   ├── 04_dlt_daily_counts.sql        # Daily processing metrics
+│   └── 05_customer_rfm_gold.sql       # RFM analysis table
+├── customer_segmentation_kmeans_clustering/
+│   └── RFM data clustering.ipynb       # Customer segmentation notebook
+└── images/                             # Pipeline evolution screenshots
+    ├── 06_30_2025.png                 # Bronze layer implementation
+    ├── 07_01_2025.png                 # Silver layer addition
+    └── 07_02_2025.png                 # Gold layer RFM implementation
+```
+
+## Key Features
+
+- **Real-time Processing**: Streaming data ingestion with cloudFiles
+- **Data Quality**: Comprehensive validation and expectation handling
+- **Customer Analytics**: RFM analysis and behavioral segmentation
+- **Monitoring**: Multi-layer data quality tracking
+- **Scalability**: Delta Lake optimization and auto-compaction
+- **Production Ready**: Materialized views and optimized storage
+
+## 🚀 Live Application
+
+**RFM Customer Analytics Dashboard**: [https://rfm-dashboard-q7ne.onrender.com/](https://rfm-dashboard-q7ne.onrender.com/)
+
+This interactive dashboard demonstrates the end-to-end pipeline results, showcasing:
+- Customer segmentation analysis from the ML pipeline
+- RFM metrics visualization (Recency, Frequency, Monetary)
+- Customer cluster distributions and insights
+- Real-time analytics powered by the data engineering pipeline
 
 ## Data Quality
 
