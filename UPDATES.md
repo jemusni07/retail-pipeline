@@ -14,3 +14,5 @@
 
 **[07-08-2025]** - Added new script to the notebook, it is now saving all of the customer with its clustering attribute to a materialized delta table
    -  [Notebook](eda_kmeans_clustering/RFM data clustering.ipynb)
+
+**[07-12-2025]** - Completed the application layer deployed to render.com - [https://rfm-dashboard-q7ne.onrender.com/](https://rfm-dashboard-q7ne.onrender.com/)
