@@ -15,10 +15,9 @@ This data engineering project showcases a full-stack implementation covering:
 
 ## Data Architecture
 
-![Data Architecture](https://mermaid.ink/img/pako:eNp1VEtPwzAM_iuRz-0faBBBQSABwhthxIFNShY3TSu3TvwYY9r-OylPbWMJcmMr_vws-7OjjrQ2yOiBPtJJKJxB_rR-Q5fzJSK8y0yLxiiQHo0QJh-3JcgKczBxMK1EjLrGCGFbM7pBKXLb6nTqDKNy1s3FzCRhDZNOQzBkYLXdkmnlrZ_fOJ_oLKaJb9CYo4ozEJQjNNOuM4qYKuSoQZ63bfAyZqMfAzm7lF8d7N_gXQpzMxrJsZJNSqpjAzMLFKhQOHJDQKP1TCFTqKFJHcT6BBvhLZhVR5wr72MjVX3-fLkWl2J16QUIJnJVe1Z5BX5RfJtm5zKr0rGwMJJz9TLrp6fhFiLdAczxMNjnlXKoWH5nN4s4u2K5-w_lL8tfqBn7Zv7_X_xgBdjE2Zr-J1N_yZVsRrm9JZSGYAr1JLaV0i4Q2oEJ7i7EGK8Km4_T3J-wJq6HW71t_JsY44Bxj-CY6BcxQwkYY4HTz8JqEj8VjGDYNjGPRZ8Hj-n-yZ-m_hE9fMsRl_9SHdIjsQjvLXJ6-pYjDhB7tg_vSHrfVeIh6pTa-gXb6YeW-Tj7BtOXmIw?type=png)
+The project follows a medallion architecture with three layers:
 
-<details>
-<summary>Click to view Mermaid source code</summary>
+- **Bronze Layer**: Raw data ingestion and metadata capture
 
 ```mermaid
 graph TD
@@ -173,10 +172,8 @@ graph TD
 
 ## Data Lineage
 
-![Data Lineage](https://mermaid.ink/img/pako:eNp1UstOwzAQ_JXVntMf0CKCgkA8hBcNHNq4WcXe2KvY68hrSqr-O3FeSikVvnhmZ2d2rF_lEbEGJe5YPeXGoLgdf6TzeQOI727bhCvvIXhcI0y-bkuQO8yhjp1tBTHcLJ3zfaX0Ae7Y2qZtdWOd7VaL0JKCCqUrZqwO4RHhDWapBvMRCtrXFDXI8-YDbRfOsL9xPkU4FMZ-olZOl70CQTnCKqeMBKMhOQ2yvG2Dlz4e_djgH2D_Apn1_P2PcOxJI-5ZHV9W7QL9onhOg_9Fy7QQNGBk5-q5Zc9Po-2KcD9Eg_ZcNzgD7UJ_DpZ5hH--0vyGb5_Zya9_cKBbNUfnWXGO_wvQKG3A7hHQqFSQ2OJJCtm0wZomJN87z-4uRCGe-pv8H5D8U5BeUJwBzoiXmT_0wJ_iDhfNrVnHHetmC4qJxF38I4p7TY_Ia-xOWM_oKTmNiJH9DHXxHiw4XVhFWoKxPjGi0iqI--2Xnf5IH8Q1xnQ?type=png)
+![Data Lineage](images/07_02_2025.png)
 
-<details>
-<summary>Click to view Mermaid source code</summary>
 
 ```mermaid
 graph LR
