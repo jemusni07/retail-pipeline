@@ -118,6 +118,61 @@ graph TD
 - **Features**: K-means clustering, segment analysis, model persistence
 - **Output**: Materialized customer segments for business applications
 
+## Customer Segmentation Strategy
+
+### Intelligent Clustering Approach
+- **Automated K-Selection**: Combined silhouette score (60%) + elbow method (40%) for optimal clusters
+- **Outlier Management**: Separates outliers before clustering to improve model accuracy
+- **Data Preprocessing**: StandardScaler normalization of RFM metrics for fair clustering
+- **3D Analysis**: Clusters based on scaled Recency, Frequency, and Monetary dimensions
+
+### Business-Friendly Segment Classifications
+
+#### 🏆 **Premium Tiers**
+- **Super VIP Champions**: Ultra-high value + high frequency + recent activity
+- **VIP At Risk**: Ultra-high value + high frequency + dormant customers  
+- **Ultra High Value Active**: Extremely high spenders with active engagement
+
+#### 💎 **High-Value Tiers**
+- **Champions**: High monetary & frequency with recent activity
+- **Big Spenders**: High monetary value with lower frequency
+- **Loyal Customers At Risk**: Previously loyal customers becoming dormant
+
+#### ⚡ **Active Engagement Tiers**
+- **Super Frequent Active**: Very frequent buyers with moderate spending
+- **Potential Loyalists**: Customers showing growth potential
+- **Frequent Buyers**: Regular purchasers with consistent activity
+
+#### ⚠️ **Risk Management Tiers**
+- **Cannot Lose Them**: Frequent buyers who have gone dormant
+- **At Risk Customers**: Various risk levels across value tiers
+- **High Value At Risk**: Valuable customers showing dormancy signs
+
+#### 📈 **Growth & New Segments**
+- **New Customers**: Recent acquisitions with low initial activity
+- **Hibernating**: Low-value, low-frequency, dormant customers
+
+### RFM Metrics & Business Logic
+
+#### **Smart Thresholds**
+- **Monetary Tiers**: High (>median), Ultra-high (>2x median), Super-high (>4x median)
+- **Recency Scoring**: Recent vs. Dormant based on median days since purchase
+- **Frequency Analysis**: From single purchase to super frequent buyers
+
+#### **Actionable Business Recommendations**
+Each segment receives tailored strategies:
+- **VIP Segments**: White-glove service, personal account managers, exclusive previews
+- **High-Value Segments**: Premium recommendations, loyalty rewards, cross-sell opportunities  
+- **At-Risk Segments**: Win-back campaigns, personalized offers, reactivation incentives
+- **Growth Segments**: Upselling campaigns, subscription models, frequency building
+- **New/Low-Value**: Educational content, onboarding programs, trial offers
+
+### Production Implementation
+- **Materialized Delta Tables**: `customer_rfm_kmeans_clustered`, `cluster_summary`, `cluster_description_and_recommendation`
+- **Daily Updates**: Automated refresh with `UpdateDate` tracking
+- **3D Visualization**: Interactive cluster analysis and validation
+- **Statistical Validation**: Silhouette scores and elbow method for model quality
+
 ## Data Quality Monitoring
 
 - **Bronze DQ**: `dlt_scripts/01_bronze_dq.sql` - Data quality tracking at ingestion
