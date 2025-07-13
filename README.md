@@ -2,6 +2,8 @@
 
 A comprehensive data engineering project demonstrating the complete data lifecycle from raw data ingestion to machine learning application deployment. This project implements customer segmentation using RFM analysis and K-means clustering for retail transaction data.
 
+**By Jonathan Musni** | 💼 [LinkedIn](https://www.linkedin.com/in/musni-jonathan) | 🐙 [GitHub](https://github.com/jemusni07) | 📧 musni.jonathan7@gmail.com
+
 ## Project Overview
 
 This data engineering project showcases a full-stack implementation covering:
@@ -12,6 +14,16 @@ This data engineering project showcases a full-stack implementation covering:
 - **Analytics Layer**: RFM customer segmentation and behavioral analysis
 - **Application Layer**: Machine learning clustering with materialized results
 - **Monitoring Layer**: Comprehensive data quality and pipeline observability
+
+## 🚀 Live Application
+
+**RFM Customer Analytics Dashboard**: [https://rfm-dashboard-q7ne.onrender.com/](https://rfm-dashboard-q7ne.onrender.com/)
+
+This interactive dashboard demonstrates the end-to-end pipeline results, showcasing:
+- Customer segmentation analysis from the ML pipeline
+- RFM metrics visualization (Recency, Frequency, Monetary)
+- Customer cluster distributions and insights
+- Real-time analytics powered by the data engineering pipeline
 
 ## Data Architecture
 
@@ -44,7 +56,7 @@ graph TD
     subgraph "Application Layer"
         ML[ML Pipeline<br/>K-means Clustering]
         SEGMENTS[Customer Segments<br/>Materialized Table]
-        DASHBOARD[Databricks Dashboard<br/>Visual Analytics]
+        DASHBOARD[RFM Analytics Dashboard<br/>rfm-dashboard-q7ne.onrender.com]
     end
     
     subgraph "Monitoring & Quality"
@@ -274,6 +286,7 @@ Monetary: DECIMAL        -- Total spend amount
 - Stock code pattern validation (5-digit codes or 'PADS')
 - Customer ID must be present for RFM analysis
 - Removes invalid or negative quantities/prices
+
 
 ## Disclaimer
 
