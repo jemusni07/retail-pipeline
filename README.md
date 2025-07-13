@@ -15,10 +15,6 @@ This data engineering project showcases a full-stack implementation covering:
 
 ## Data Architecture
 
-The project follows a medallion architecture with three layers:
-
-- **Bronze Layer**: Raw data ingestion and metadata capture
-
 ```mermaid
 graph TD
     subgraph "Data Preparation"
@@ -171,8 +167,6 @@ graph TD
 - **Production Ready**: Materialized views and optimized storage
 
 ## Data Lineage
-
-![Data Lineage](images/07_02_2025.png)
 
 
 ```mermaid
