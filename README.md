@@ -262,18 +262,23 @@ processing_date: DATE    -- Processing date
 ### Silver Layer Schema
 ```sql
 -- retail_transactions_silver
-InvoiceNo: STRING        -- Cleaned invoice number
-StockCode: STRING        -- Product code
-Description: STRING      -- Product description
-Quantity: INTEGER        -- Quantity (>0)
-UnitPrice: DECIMAL(10,2) -- Unit price (>=0)
-CustomerID: STRING       -- Customer ID (not null)
+InvoiceNo: STRING        -- Cleaned invoice number (not null, length 6-7)
+StockCode: STRING        -- Product code (not null)
+Description: STRING      -- Product description (nulls allowed)
+Quantity: INTEGER        -- Quantity (not null, >0)
+UnitPrice: DECIMAL(10,2) -- Unit price (>=0, nulls allowed)
+CustomerID: STRING       -- Customer ID (nulls allowed)
 Country: STRING          -- Customer country
-InvoiceDate: DATE        -- Parsed date
+InvoiceDate: DATE        -- Parsed date (not null)
 IsCancellation: BOOLEAN  -- Cancellation flag
-TotalPrice: DECIMAL      -- Calculated total
-Year/Month/DayOfWeek: INT -- Date components
-SurrogateKey: STRING     -- Unique identifier
+TotalPrice: DECIMAL(12,2) -- Calculated total (Quantity × UnitPrice)
+Year: INTEGER            -- Extracted year
+Month: INTEGER           -- Extracted month
+DayOfWeek: INTEGER       -- Extracted day of week (1-7)
+SurrogateKey: STRING     -- Unique identifier (InvoiceNo_StockCode_Quantity)
+ingestion_timestamp: TIMESTAMP -- From Bronze layer
+source_file: STRING      -- From Bronze layer
+processing_date: DATE    -- From Bronze layer
 ```
 
 ### Gold Layer Schema
