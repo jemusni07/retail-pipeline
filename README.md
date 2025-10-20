@@ -50,11 +50,12 @@ Imagine RFM scores of customers plotted in 3D scatter plot. K means does this
 
 Now to get to the Machine Learning and customer segmentation. We have to bridge transactions that we are getting into an Customer RFM table clusters. The role of the data team is to understand how these metrics can be modeled out of transactions data that may come in streams or batch to the data hub. We also have to consider other areas of data engineering.
 
-<Insert transaction into clustered table transformation>
+<Insert the whole data architecture with the lifecycle>
+
+
 
 On top of ETL and Data Modeling, we have to make sure that the data that we are providing to the downstream stakeholders have gone through proper data engineering lifecycle that includes data quality check, orchestration and governance. In this manner we will be confident that the RFM table we will be creating has full the integrity we need for it to be deployed and used by the marketing team. We will lay out each pieces on how we get to that point.
 
-<Insert the whole data architecture with the lifecycle>
 
 ## Data Source
 
@@ -123,21 +124,136 @@ In the bronze layer, raw unfiltered data is expected, while in silver layer we s
 - **valid_unit_price**: Unit price >= 0
 - **valid_invoice_date**: Valid date format required
 
-### Quality Monitoring Scripts
-- **Bronze DQ**: `dlt_scripts/01_bronze_dq.sql` - Data quality tracking at ingestion
-- **Daily Counts**: `dlt_scripts/04_dlt_daily_counts.sql` - Daily processing metrics
-- **Bronze-Silver Comparison**: `dlt_scripts/02_bronze_silver_dq_comparison.sql` - Data validation between layers
+### Data Filters & Validation (Gold Layer)
 
-### Data Filters & Validation
-These are the data quality rules allowed to be used in building the RFM table for 
+These are the business rules that were allowed to be used in building the RFM table. 
 
 - Excludes cancellation transactions (Invoice starting with 'C')
 - Stock code pattern validation (5-digit codes or 'PADS')
 - Customer ID must be present for RFM analysis
 - Removes invalid or negative quantities/prices
 
+### Quality Monitoring Scripts
+
+As part of the pipeline, three tables were created to observe data quality of the data pipeline. One table checks for comparison with the records between bronze(raw data) and silver(cleaned data) layers
+
+- **Bronze DQ**: `dlt_scripts/01_bronze_dq.sql` - Data quality tracking at ingestion
+- **Daily Counts**: `dlt_scripts/04_dlt_daily_counts.sql` - Daily processing metrics
+- **Bronze-Silver Comparison**: `dlt_scripts/02_bronze_silver_dq_comparison.sql` - Data validation between bronze and silver layers
 
 ## Building the RFM Table
 
+From the silver layer transactions table, we transformed the data in an RFM table that will be used by the K Means Clustering pipeline. Each record will include the following
+  
+- Identifier
+    - CustomerID: Customer identifier   
+- RFM Aggregates
+    - Recency: Days since the last purchase
+    - Frequency: Distinct number of invoices
+    - Monetary: sum of all the transactions
+- Misc.
+    - MaxInvoiceDate: the date of the last transaction/invoice recorded
 
 <Insert RFM table transformation from silver layer>
+
+## Machine Learning with K Means Clustering
+
+The whole data pipeline up to the RFM table will now undergo data preparation and K Means Clustering to create customer segments based on the steps we outline on the k means clustering algorithm above. 
+
+
+### Detect Outliers (Frequency and Monetary)
+
+K Means clustering is very sensitive to outliers - one customer with 10,000$ can easily pull 10 customers with 100$ transaction averages. This will skew the cluster center heavily to the outliers making it hard to properly detect patterns for non-outlier transactions.
+
+Therefore the dataset coming from RFM table as filtered to exclude outliers in terms of frequency, monetary and the combination of both. For these segments, we will heuristics for identifying the clusters which we will later combined with the non outlier clusters in the final clustered RFM table
+
+<insert outlier boxplots>
+
+### Elbow Method and Silhoutte Score
+We create an automated script to figure out the best number of clusters to be used for K Means clustering, this is done by using the combination of Elbow Method and Silhoutte Score. What we do not want is a large amount of clusters that will be hard to model for market recommendation later on but also not small number where we fail to distinguish other customer segments.
+
+- **Elbow Method**  is based on analyzing the within-cluster sum of squares (WCSS), also called inertia. It works by plotting the total WCSS against different values of 𝑘 (number of clusters) and identifying the "elbow point" where the rate of decrease sharply changes. 
+
+
+- **Silhoutte Score** measures how similar a data point is to its own cluster compared to other clusters. It ranges from -1 to 1, where a higher value indicates better-defined clusters. 
+
+Source - https://www.geeksforgeeks.org/machine-learning/elbow-method-vs-silhouette-score-which-is-better/
+
+Combinin these two provides a balanced way to find right amount of clusters that helps us figure out market segments. 
+
+### Cluster Labeling and Recommendation
+
+
+
+Because the number of clusters are determined by elbow method and silhoutte score, it is possible that clusters produced by K Means will change day to day. This is on top of the three outlier clusters we have considered. 
+
+After finally labelling each customer with cluster segment, we make heuristics on the description of each clusters based on their RFM metrics. The algorithm automatically gives description to each clusters both outliers and non-outliers. Finally, each customer will now belong to a specific cluster and will be recommended with the right market reach out.
+
+#### Super VIP Segments (2 segments)
+
+| Monetary | Frequency | Recency | Segment Label | Recommendation |
+|----------|-----------|---------|---------------|----------------|
+| Greater than 2x median | Greater than 2x median | Recent | Super VIP Champions | VIP white-glove service, exclusive previews, personal account manager |
+| Greater than 2x median | Greater than 2x median | Dormant | VIP At Risk | Urgent VIP win-back campaign, personal outreach, exclusive offers |
+
+---
+
+#### Ultra High Value (Greater than 4x) - 4 segments
+
+| Monetary | Frequency | Recency | Segment Label | Recommendation |
+|----------|-----------|---------|---------------|----------------|
+| Greater than 4x median | 1-2x median | Recent | Ultra High Value Active | Premium product recommendations, loyalty rewards, cross-sell opportunities |
+| Greater than 4x median | 1-2x median | Dormant | Ultra High Value At Risk | High-value win-back campaign, premium incentives, direct communication |
+| Greater than 4x median | At or below median | Recent | Ultra Big Spenders | Increase purchase frequency, subscription models, reminder campaigns |
+| Greater than 4x median | At or below median | Dormant | Dormant Ultra High Value | Urgent win-back with personalized offers, value-based messaging |
+
+---
+
+#### High Value (2-4x) - 4 segments
+
+| Monetary | Frequency | Recency | Segment Label | Recommendation |
+|----------|-----------|---------|---------------|----------------|
+| 2-4x median | 1-2x median | Recent | High Value Active | Premium product recommendations, loyalty rewards, cross-sell opportunities |
+| 2-4x median | 1-2x median | Dormant | High Value At Risk | High-value win-back campaign, premium incentives, direct communication |
+| 2-4x median | At or below median | Recent | Big Spenders | Increase purchase frequency, subscription models, reminder campaigns |
+| 2-4x median | At or below median | Dormant | Dormant High Value / Premium Dormant | Urgent win-back with personalized offers, value-based messaging |
+
+---
+
+#### Regular High Value (1-2x) - 6 segments
+
+| Monetary | Frequency | Recency | Segment Label | Recommendation |
+|----------|-----------|---------|---------------|----------------|
+| 1-2x median | Greater than 2x median | Recent | Super Frequent Active | Volume discounts, bulk offers, increase order value campaigns |
+| 1-2x median | Greater than 2x median | Dormant | Super Frequent At Risk | Frequency-based win-back, habitual purchase reminders, subscription offers |
+| 1-2x median | 1-2x median | Recent | Champions | Maintain satisfaction, reward loyalty, upsell premium products |
+| 1-2x median | 1-2x median | Dormant | Loyal Customers At Risk | Win-back campaigns with premium offers, reactivation incentives |
+| 1-2x median | At or below median | Recent | Potential Loyalists | Increase purchase frequency, subscription models, reminder campaigns |
+| 1-2x median | At or below median | Dormant | At Risk Customers / At Risk Moderate Value | Personalized win-back with value-based messaging |
+
+---
+
+#### Low Value (At or below median) - 6 segments
+
+| Monetary | Frequency | Recency | Segment Label | Recommendation |
+|----------|-----------|---------|---------------|----------------|
+| At or below median | Greater than 2x median | Recent | Frequent Low Value | Increase average order value, bundle offers, premium upgrades |
+| At or below median | Greater than 2x median | Dormant | At Risk Frequent | Re-engagement campaigns, habit-building incentives |
+| At or below median | 1-2x median | Recent | Frequent Buyers | Nurture with targeted campaigns, education, onboarding |
+| At or below median | 1-2x median | Dormant | Cannot Lose Them | Basic reactivation campaigns, educational content |
+| At or below median | At or below median | Recent | New Customers | New customer onboarding, educational campaigns, trial offers |
+| At or below median | At or below median | Dormant | Hibernating | Low-cost retention, surveys, basic reactivation |
+
+## Full Data Lineage
+
+<Insert full data lineage>
+
+
+
+## Dashboard Link
+
+## Summary
+
+Customer segmentation with K Means Clustering is a powerful tool that is applicable to many fields such as retail, finance and other areas that has customer and transactions. With the right data engineering pipeline and modelling, marketing team will be able to efficiently create the right promotion for each demographic/customer segments. 
+
+With right ingestion strategy, proper data quality and orchestration, customer segmentation will be a task worth undertaking for retail analytics.
