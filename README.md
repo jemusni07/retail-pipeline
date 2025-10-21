@@ -14,39 +14,7 @@ The data pipeline models every transactions made everyday into customer segments
 
 Based on these metrics, the Marketing team can model recommendations for each customer segments. For example, high and frequent spenders should be rewarded with VIP treatment. Low frequent, low monetary value customer should be reached out with re-engagement initiatives. Combining these three metrics creates a way for the marketing team to create targeted campaigns and promotions. 
 
-## Customer Segmentation with K Means Clustering
 
-Traditionally, how customers are segmented is by calcullating the average RFM scores.
-- Rank each customers recency,  1 to 5, 
-- Rank each customers frequency, 1 to 5
-- Rank each customers monetary value, 1 to 5
-- Average the three scores for the average RFM score
-- Segment the customer averages based on your marketing strategy. For those with average close to 1, labeled as "at risk customers" and those closer to 5 as "VIP"
-
-This approach is very simple and data-driven. But it is very rigid and may not actually reflect natural behavior of the customers. 
-
-One customer with R:1 F:1 M:5 is not the same as a customer with R:1 F:5 M:1 but they will have the same average RFM score. The former is high value customer but the latter is a loyal one. With rigid rules, you loose the nuance of the customer behavior.
-
-### Why K Means Clustering?
-
-Let's say we have three customers:
-
-- Customer A: R=5, F=5, M=1 (frequent buyer, small purchases)
-- Customer B: R=1, F=1, M=5 (one-time big buyer, long ago)
-- Customer C: R=5, F=3, M=3 (regular moderate buyer)
-
-The better way for customer segmentation is to find similar customers with the same RFM patterns as Customer B and label them for how they behave - maybe "VIP at risk". Then make different labels for other groups with patterns like customer A or C
-
-K Means Clustering aims to automate this pattern matching. It is an unsupervised machine learning algorithm that clusters data points into a predetermined number of clusters. 
-
-Imagine RFM scores of customers plotted in 3D scatter plot. K means does this 
-    - Step 1: It randomly places k "cluster centers"(think of them like flags) on the graph
-    - Step 2: Each customer gets assigned to the nearest cluster center(the flag)
-    - Step 3: Each flag moves to the average position of all customers assigned to it
-    - Step 4: Repeat Steps 2 and 3 until flags stop moving. Now you have the final clusters
-
-
-<INSERT IMAGE OF K MEANS clustered 3d Scatter plot>
 
 
 ## Data Engineering the RFM pipeline
@@ -160,95 +128,34 @@ From the silver layer transactions table, we transformed the data in an RFM tabl
 
 <Insert RFM table transformation from silver layer>
 
-## Machine Learning with K Means Clustering
 
-The whole data pipeline up to the RFM table will now undergo data preparation and K Means Clustering to create customer segments based on the steps we outline on the k means clustering algorithm above. 
-
-
-### Detect Outliers (Frequency and Monetary)
-
-K Means clustering is very sensitive to outliers - one customer with 10,000$ can easily pull 10 customers with 100$ transaction averages. This will skew the cluster center heavily to the outliers making it hard to properly detect patterns for non-outlier transactions.
-
-Therefore the dataset coming from RFM table as filtered to exclude outliers in terms of frequency, monetary and the combination of both. For these segments, we will heuristics for identifying the clusters which we will later combined with the non outlier clusters in the final clustered RFM table
-
-<insert outlier boxplots>
-
-### Elbow Method and Silhoutte Score
-We create an automated script to figure out the best number of clusters to be used for K Means clustering, this is done by using the combination of Elbow Method and Silhoutte Score. What we do not want is a large amount of clusters that will be hard to model for market recommendation later on but also not small number where we fail to distinguish other customer segments.
-
-- **Elbow Method**  is based on analyzing the within-cluster sum of squares (WCSS), also called inertia. It works by plotting the total WCSS against different values of 𝑘 (number of clusters) and identifying the "elbow point" where the rate of decrease sharply changes. 
-
-
-- **Silhoutte Score** measures how similar a data point is to its own cluster compared to other clusters. It ranges from -1 to 1, where a higher value indicates better-defined clusters. 
-
-Source - https://www.geeksforgeeks.org/machine-learning/elbow-method-vs-silhouette-score-which-is-better/
-
-Combinin these two provides a balanced way to find right amount of clusters that helps us figure out market segments. 
-
-### Cluster Labeling and Recommendation
+## Customer Segmentation - Building the Heuristic Rules
 
 
 
-Because the number of clusters are determined by elbow method and silhoutte score, it is possible that clusters produced by K Means will change day to day. This is on top of the three outlier clusters we have considered. 
 
-After finally labelling each customer with cluster segment, we make heuristics on the description of each clusters based on their RFM metrics. The algorithm automatically gives description to each clusters both outliers and non-outliers. Finally, each customer will now belong to a specific cluster and will be recommended with the right market reach out.
 
-#### Super VIP Segments (2 segments)
 
-| Monetary | Frequency | Recency | Segment Label | Recommendation |
-|----------|-----------|---------|---------------|----------------|
-| Greater than 2x median | Greater than 2x median | Recent | Super VIP Champions | VIP white-glove service, exclusive previews, personal account manager |
-| Greater than 2x median | Greater than 2x median | Dormant | VIP At Risk | Urgent VIP win-back campaign, personal outreach, exclusive offers |
 
----
 
-#### Ultra High Value (Greater than 4x) - 4 segments
 
-| Monetary | Frequency | Recency | Segment Label | Recommendation |
-|----------|-----------|---------|---------------|----------------|
-| Greater than 4x median | 1-2x median | Recent | Ultra High Value Active | Premium product recommendations, loyalty rewards, cross-sell opportunities |
-| Greater than 4x median | 1-2x median | Dormant | Ultra High Value At Risk | High-value win-back campaign, premium incentives, direct communication |
-| Greater than 4x median | At or below median | Recent | Ultra Big Spenders | Increase purchase frequency, subscription models, reminder campaigns |
-| Greater than 4x median | At or below median | Dormant | Dormant Ultra High Value | Urgent win-back with personalized offers, value-based messaging |
 
----
 
-#### High Value (2-4x) - 4 segments
 
-| Monetary | Frequency | Recency | Segment Label | Recommendation |
-|----------|-----------|---------|---------------|----------------|
-| 2-4x median | 1-2x median | Recent | High Value Active | Premium product recommendations, loyalty rewards, cross-sell opportunities |
-| 2-4x median | 1-2x median | Dormant | High Value At Risk | High-value win-back campaign, premium incentives, direct communication |
-| 2-4x median | At or below median | Recent | Big Spenders | Increase purchase frequency, subscription models, reminder campaigns |
-| 2-4x median | At or below median | Dormant | Dormant High Value / Premium Dormant | Urgent win-back with personalized offers, value-based messaging |
 
----
 
-#### Regular High Value (1-2x) - 6 segments
 
-| Monetary | Frequency | Recency | Segment Label | Recommendation |
-|----------|-----------|---------|---------------|----------------|
-| 1-2x median | Greater than 2x median | Recent | Super Frequent Active | Volume discounts, bulk offers, increase order value campaigns |
-| 1-2x median | Greater than 2x median | Dormant | Super Frequent At Risk | Frequency-based win-back, habitual purchase reminders, subscription offers |
-| 1-2x median | 1-2x median | Recent | Champions | Maintain satisfaction, reward loyalty, upsell premium products |
-| 1-2x median | 1-2x median | Dormant | Loyal Customers At Risk | Win-back campaigns with premium offers, reactivation incentives |
-| 1-2x median | At or below median | Recent | Potential Loyalists | Increase purchase frequency, subscription models, reminder campaigns |
-| 1-2x median | At or below median | Dormant | At Risk Customers / At Risk Moderate Value | Personalized win-back with value-based messaging |
 
----
 
-#### Low Value (At or below median) - 6 segments
 
-| Monetary | Frequency | Recency | Segment Label | Recommendation |
-|----------|-----------|---------|---------------|----------------|
-| At or below median | Greater than 2x median | Recent | Frequent Low Value | Increase average order value, bundle offers, premium upgrades |
-| At or below median | Greater than 2x median | Dormant | At Risk Frequent | Re-engagement campaigns, habit-building incentives |
-| At or below median | 1-2x median | Recent | Frequent Buyers | Nurture with targeted campaigns, education, onboarding |
-| At or below median | 1-2x median | Dormant | Cannot Lose Them | Basic reactivation campaigns, educational content |
-| At or below median | At or below median | Recent | New Customers | New customer onboarding, educational campaigns, trial offers |
-| At or below median | At or below median | Dormant | Hibernating | Low-cost retention, surveys, basic reactivation |
 
-## Full Data Lineage
+
+
+
+
+
+
+## Full Data Lineage/ Table Lineage?
 
 <Insert full data lineage>
 
