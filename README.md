@@ -14,7 +14,38 @@ The data pipeline models every transactions made everyday into customer segments
 
 Based on these metrics, the Marketing team can model recommendations for each customer segments. For example, high and frequent spenders should be rewarded with VIP treatment. Low frequent, low monetary value customer should be reached out with re-engagement initiatives. Combining these three metrics creates a way for the marketing team to create targeted campaigns and promotions. 
 
+## Customer Segmentation Heuristics
 
+This model creates 12 customer segments by combining **Value Tier** (based on spending) with **Engagement Status** (based on recency and frequency).
+
+### Segmentation Logic
+
+| Dimension | Levels | Criteria |
+|-----------|--------|----------|
+| **Value Tier** | High Value | Monetary > 2× overall median |
+| | Growing Value | Monetary > overall median |
+| | Base Value | Monetary ≤ overall median |
+| **Engagement Status** | Active & Engaged | Recent purchase + High frequency |
+| | At Risk | Not recent + High frequency |
+| | Developing | Recent purchase + Lower frequency |
+| | Inactive | Not recent + Lower frequency |
+
+### Segment Matrix & Recommendations
+
+| Value Tier | Engagement Status | Strategy | Action |
+|------------|------------------|----------|--------|
+| **High Value** | Active & Engaged | VIP Retention | Loyalty rewards, exclusive access, personalized service |
+| **High Value** | At Risk | Urgent Win-back | Personal outreach, premium incentives, feedback collection |
+| **High Value** | Developing | Frequency Building | Subscription offers, engagement campaigns, upsell opportunities |
+| **High Value** | Inactive | High-touch Reactivation | Direct outreach, special offers, re-engagement incentives |
+| **Growing Value** | Active & Engaged | Tier Upgrade | Cross-sell campaigns, loyalty programs, value expansion |
+| **Growing Value** | At Risk | Targeted Retention | Personalized offers, loyalty appeals, habit rebuilding |
+| **Growing Value** | Developing | Engagement Nurturing | Educational content, onboarding optimization, trial offers |
+| **Growing Value** | Inactive | Standard Reactivation | Email campaigns, modest incentives, feedback surveys |
+| **Base Value** | Active & Engaged | Value Expansion | AOV increase through bundles, category cross-sells, upsells |
+| **Base Value** | At Risk | Light-touch Re-engagement | Automated reminders, small incentives, habit triggers |
+| **Base Value** | Developing | New Customer Onboarding | Welcome series, product education, first-purchase incentives |
+| **Base Value** | Inactive | Minimal Investment | Automated surveys, low-cost reactivation, list maintenance |
 
 
 ## Data Engineering the RFM pipeline
@@ -64,6 +95,7 @@ Databricks Lakeflow serves as the orchestration to automate the DLT pipeline, th
 
 
 <insert table transformation here with the three layers with lakeflow,dlt and medallion>
+<insert pipeline runs>
 
 
 ### 🥉 Bronze Layer - Raw Data Ingestion
@@ -130,34 +162,6 @@ From the silver layer transactions table, we transformed the data in an RFM tabl
 
 
 ## Customer Segmentation - Building the Heuristic Rules
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Full Data Lineage/ Table Lineage?
-
-<Insert full data lineage>
 
 
 
