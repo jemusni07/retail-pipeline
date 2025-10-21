@@ -1,4 +1,4 @@
-CREATE OR REFRESH MATERIALIZED VIEW retail_analytics.dlt.customer_rfm_segments AS
+CREATE OR REFRESH MATERIALIZED VIEW retail_analytics.dlt.customer_rfm_segment_label_and_recommendation AS
 WITH overall_medians AS (
     SELECT 
         PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY Monetary) AS overall_monetary,

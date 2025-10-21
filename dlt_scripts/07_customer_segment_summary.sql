@@ -12,6 +12,6 @@ SELECT
     ROUND(SUM(Monetary), 2) AS Total_Revenue,
     ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS Pct_of_Customers,
     ROUND(100.0 * SUM(Monetary) / SUM(SUM(Monetary)) OVER (), 2) AS Pct_of_Revenue
-FROM retail_analytics.dlt.customer_rfm_segments
+FROM retail_analytics.dlt.customer_rfm_segment_label_and_recommendation
 GROUP BY Segment,recommendation
 ORDER BY Total_Revenue DESC;
