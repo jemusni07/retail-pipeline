@@ -2,6 +2,10 @@
 
 **By Jonathan Musni** | 💼 [LinkedIn](https://www.linkedin.com/in/musni-jonathan) | 🐙 [GitHub](https://github.com/jemusni07) | 📧 musni.jonathan7@gmail.com
 
+## Objective of the Project
+- Group customers into distinct segments based on their shared characteristics and behavior to enable targeted marketing campaigns, optimize resource allocation and improve customer retention.
+
+## Recency Frequency and Monetary(RFM) Metrics
 The data pipeline models every transactions made everyday into customer segments based on their Recency Frequency and Monetary(RFM) behavior:
 
  - **Recency**: How many days since the customer last bought from the website - this metric may indicate potential more engagement through promotions or discount.
@@ -12,8 +16,8 @@ Based on these metrics, the Marketing team can model recommendations for each cu
 
 ## Customer Segmentation with K Means Clustering
 
-Traditionally, how customers are segmented is by creating heuristics rule based on RFM scores.
-- Rank each customers recency,  1 to 5
+Traditionally, how customers are segmented is by calcullating the average RFM scores.
+- Rank each customers recency,  1 to 5, 
 - Rank each customers frequency, 1 to 5
 - Rank each customers monetary value, 1 to 5
 - Average the three scores for the average RFM score
