@@ -53,8 +53,8 @@ This model creates 12 customer segments by combining **Value Tier** (based on sp
 
 Now to get to the Machine Learning and customer segmentation. We have to bridge transactions that we are getting into an Customer RFM table clusters. The role of the data team is to understand how these metrics can be modeled out of transactions data that may come in streams or batch to the data hub. We also have to consider other areas of data engineering.
 
-<Insert the whole data architecture with the lifecycle>
-
+![Data Architecture](images/data_architecture.png)
+*Data Architecture with the lifecycle of the data from raw to business intelligence layer following the Medallion Architecture.*
 
 
 On top of ETL and Data Modeling, we have to make sure that the data that we are providing to the downstream stakeholders have gone through proper data engineering lifecycle that includes data quality check, orchestration and governance. In this manner we will be confident that the RFM table we will be creating has full the integrity we need for it to be deployed and used by the marketing team. We will lay out each pieces on how we get to that point.
@@ -82,7 +82,6 @@ The S3 prefix where all of the daily csvs are stored is mounted in Databricks in
 - **Automation**: [GitHub Actions for scheduled S3 uploads](https://github.com/jemusni07/daily_uploads)
 - **Storage**: AWS S3 bucket prefix (`s3://raw-retail-jmusni/daily_sales/`)
 
-<Insert data ingestion strategy image>
 
 
 ## Data Orchestration with the Medallion Layers
@@ -94,8 +93,8 @@ DLT(Delta Live Tables) is used for processing the data with its declarative fram
 Databricks Lakeflow serves as the orchestration to automate the DLT pipeline, the pipeline is triggered on a daily basis.
 
 
-<insert table transformation here with the three layers with lakeflow,dlt and medallion>
-<insert pipeline runs>
+![Table Lineage](images/table_lineage.png)
+*Table Lineage from bronze transactions to segment summary. Two Streaming tables, 3 materialized views, 3 data quality tracking tables.*
 
 
 ### 🥉 Bronze Layer - Raw Data Ingestion
@@ -158,14 +157,14 @@ From the silver layer transactions table, we transformed the data in an RFM tabl
 - Misc.
     - MaxInvoiceDate: the date of the last transaction/invoice recorded
 
-<Insert RFM table transformation from silver layer>
 
-
-## Customer Segmentation - Building the Heuristic Rules
-
+![Retail Transactions to Silver](images/retail_transactions_to_silver.png)
+*Retail Transactions to Silver Layer Transformation*
 
 
 ## Dashboard Link
+
+The dashboard is hosted on Streamlit and can be accessed [here](https://retail-rfm-customer-segmentation.streamlit.app/).
 
 ## Summary
 
