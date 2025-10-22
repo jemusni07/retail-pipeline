@@ -57,7 +57,7 @@ Now to get to the Machine Learning and customer segmentation. We have to bridge 
 *Data Architecture with the lifecycle of the data from raw to business intelligence layer following the Medallion Architecture.*
 
 
-On top of ETL and Data Modeling, we have to make sure that the data that we are providing to the downstream stakeholders have gone through proper data engineering lifecycle that includes data quality check, orchestration and governance. In this manner we will be confident that the RFM table we will be creating has full the integrity we need for it to be deployed and used by the marketing team. We will lay out each pieces on how we get to that point.
+On top of ETL and Data Modeling, we have to make sure that the data that we are providing to the downstream stakeholders have gone through proper data engineering lifecycle that includes data quality check, orchestration and governance. In this manner we will be confident that the RFM table we will be creating has the full integrity we need for it to be deployed and used by the marketing team. We will lay out each pieces on how we get to that point.
 
 
 ## Data Source
