@@ -51,7 +51,7 @@ This model creates 12 customer segments by combining **Value Tier** (based on sp
 ## Data Engineering the RFM pipeline
 
 
-Now to get to the Machine Learning and customer segmentation. We have to bridge transactions that we are getting into an Customer RFM table clusters. The role of the data team is to understand how these metrics can be modeled out of transactions data that may come in streams or batch to the data hub. We also have to consider other areas of data engineering.
+Now to get to the Machine Learning and customer segmentation. We have to bridge transactions that we are getting into an Customer RFM table clusters. The role of the data team is to understand how these metrics can be modeled out of transactions data that may come in streams or batch. Proper data engineering design holds the foundation of the whole analytics pipeline.
 
 ![Data Architecture](images/data_architecture.png)
 *Data Architecture with the lifecycle of the data from raw to business intelligence layer following the Medallion Architecture.*
