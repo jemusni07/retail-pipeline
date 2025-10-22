@@ -62,7 +62,7 @@ On top of ETL and Data Modeling, we have to make sure that the data that we are 
 
 ## Data Source
 
-For a portfolio project, it is nearly impossible to get live retail transaction dataset from retailers. In order to simulate a daily RFM Customer Segmentation with K Means Clustering, the data was source fomr archive and was split into a daily csv, adjusted the transaction dates so that the pipeline will have a "new" transactions to work out everyday until 2026. This will allow us to observe and simulate how customer segments change over time.
+For a portfolio project, it is nearly impossible to get live retail transaction dataset from retailers. In order to simulate a daily RFM Customer Segmentation, the data was source fomr archive and was split into a daily csv, adjusted the transaction dates so that the pipeline will have a "new" transactions to work out everyday until 2026. This will allow us to observe and simulate how customer segments change over time.
 
 - **Dataset**: [Online Retail II - UCI ML Repository](https://archive.ics.uci.edu/dataset/502/online+retail+ii)
 - **Description**: UK-based online retail transactions (2009-2011) for unique gift-ware
@@ -146,7 +146,7 @@ As part of the pipeline, three tables were created to observe data quality of th
 
 ## Building the RFM Table
 
-From the silver layer transactions table, we transformed the data in an RFM table that will be used by the K Means Clustering pipeline. Each record will include the following
+From the silver layer transactions table, we transformed the data in an RFM table. Each record will include the following
   
 - Identifier
     - CustomerID: Customer identifier   
@@ -168,6 +168,6 @@ The dashboard is hosted on Streamlit and can be accessed [here](https://retail-r
 
 ## Summary
 
-Customer segmentation with K Means Clustering is a powerful tool that is applicable to many fields such as retail, finance and other areas that has customer and transactions. With the right data engineering pipeline and modelling, marketing team will be able to efficiently create the right promotion for each demographic/customer segments. 
+Customer segmentation is a powerful tool that is applicable to many fields such as retail, finance and other areas that has customer and transactions. With the right data engineering pipeline and modelling, marketing team will be able to efficiently create the right promotion for each demographic/customer segments. 
 
-With right ingestion strategy, proper data quality and orchestration, customer segmentation will be a task worth undertaking for retail analytics.
+By creating the right ingestion strategy, proper data quality checks and orchestration, customer segmentation will be a task worth undertaking for retail analytics.
